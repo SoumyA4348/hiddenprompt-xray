@@ -68,6 +68,8 @@ worker.onmessage = ({ data: m }) => {
     engineReady = true;
     $("engine").hidden = true;
     if (queued) { const q = queued; queued = null; runScan(q.name, q.bytes); }
+    // Registered only now, so its precache is served from the HTTP cache the engine just filled.
+    navigator.serviceWorker?.register("./sw.js").catch(() => {});
     return;
   }
   if (m.type === "fatal") {
