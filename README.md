@@ -16,6 +16,9 @@ from Google), so reviewers can check confidential submissions.
 - `py/xray.py` adds only what the page needs: where each hidden run sits on its page, page images, and the
   extracted text with hidden parts marked. The clean PDF comes from the detector's own `strip()`.
 - `app.js` is the UI. `index.html` holds the static Phase 2 chart (Table II of the paper).
+- `sw.js` keeps the engine on the device after the first visit, so later visits skip the ~30 MB download
+  and the app works offline. Engine files are served cache-first; app files network-first. Bump `VERSION`
+  in `sw.js` whenever anything in `vendor/` changes.
 
 ## Checks
 
@@ -23,6 +26,9 @@ from Google), so reviewers can check confidential submissions.
 - Lin et al.'s 18 known positives (arXiv 2507.06185v2, Table 1): 18/18 `prompt`, with verdict, intent and
   reasons identical to native Python on PyMuPDF 1.28 (`tools/results/`).
 - Browser smoke test (engine loads, sample scan, clean copy): Chromium, Firefox, WebKit.
+- Service worker: after the first visit, reloads take the engine from the cache, and an offline reload
+  still starts and scans the sample (Edge, Firefox, WebKit). At 20 Mbps the first visit took 17 s to be
+  ready and an offline reload about 4 s.
 
 ```sh
 cd tools && npm i pyodide@0.29.5
